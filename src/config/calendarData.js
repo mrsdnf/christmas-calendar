@@ -31,35 +31,35 @@ export const DOOR_POSITIONS = [
 export const DAY_CONTENT = {
   1: {
     images: [
-      { id: 1, source: require('../../assets/day1/item1/image.png'), sound: null },
-      { id: 2, source: require('../../assets/day1/item2/image.png'), sound: null },
-      { id: 3, source: require('../../assets/day1/item3/image.png'), sound: null },
+      { id: 1, source: require('../../assets/day1/item1/image.png'), sound: require('../../assets/day1/item1/sound.mp3') },
+      { id: 2, source: require('../../assets/day1/item2/image.png'), sound: require('../../assets/day1/item2/sound.mp3') },
+      { id: 3, source: require('../../assets/day1/item3/image.png'), sound: require('../../assets/day1/item3/sound.mp3') },
     ]
   },
   2: {
     images: [
-      { id: 1, source: require('../../assets/day2/item1/image.png'), sound: null },
-      { id: 2, source: require('../../assets/day2/item2/image.png'), sound: null },
-      { id: 3, source: require('../../assets/day2/item3/image.png'), sound: null },
+      { id: 1, source: require('../../assets/day2/item1/image.png'), sound: require('../../assets/day2/item1/sound.mp3') },
+      { id: 2, source: require('../../assets/day2/item2/image.png'), sound: require('../../assets/day2/item2/sound.mp3') },
+      { id: 3, source: require('../../assets/day2/item3/image.png'), sound: require('../../assets/day2/item3/sound.mp3') },
     ]
   },
   3: {
     images: [
-      { id: 1, source: require('../../assets/day3/item1/image.png'), sound: null },
-      { id: 2, source: require('../../assets/day3/item2/image.png'), sound: null },
-      { id: 3, source: require('../../assets/day3/item3/image.png'), sound: null },
+      { id: 1, source: require('../../assets/day3/item1/image.png'), sound: require('../../assets/day3/item1/sound.mp3') },
+      { id: 2, source: require('../../assets/day3/item2/image.png'), sound: require('../../assets/day3/item2/sound.mp3') },
+      { id: 3, source: require('../../assets/day3/item3/image.png'), sound: require('../../assets/day3/item3/sound.mp3') },
     ]
   },
   4: {
     images: [
-      { id: 1, source: require('../../assets/day4/item1/image.png'), sound: null },
+      { id: 1, source: require('../../assets/day4/item1/image.png'), sound: require('../../assets/day4/item1/sound.mp3') },
       { id: 2, source: require('../../assets/day4/item2/image.png'), sound: null },
-      { id: 3, source: require('../../assets/day4/item3/image.png'), sound: null },
+      { id: 3, source: require('../../assets/day4/item3/image.png'), sound: require('../../assets/day4/item3/sound.mp3') },
     ]
   },
   5: {
     images: [
-      { id: 1, source: require('../../assets/day5/item1/image.png'), sound: null },
+      { id: 1, source: require('../../assets/day5/item1/image.png'), sound: require('../../assets/day5/item1/sound.mp3') },
       { id: 2, source: require('../../assets/day5/item2/image.png'), sound: null },
     ]
   },
@@ -136,7 +136,7 @@ export const DAY_CONTENT = {
   },
   17: {
     images: [
-      { id: 1, source: require('../../assets/day17/item1/image.png'), sound: null },
+      { id: 1, source: require('../../assets/day17/item1/image.png'), sound: require('../../assets/day17/item1/sound.mp3') },
       { id: 2, source: require('../../assets/day17/item2/image.png'), sound: null },
     ]
   },

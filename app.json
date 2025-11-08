@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "christmas-calendar",
+    "name": "Christmas Calendar",
     "slug": "christmas-calendar",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,17 +13,28 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.christmascalendar.app",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.christmascalendar.app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7d3af3bd-3075-4c73-ae8f-64649d9045cb"
+      }
+    },
+    "owner": "mrsdnf"
   }
 }

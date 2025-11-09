@@ -57,6 +57,18 @@ const DayScreen = ({ route, navigation }) => {
         return;
       }
 
+      // Stop all currently playing sounds
+      await Promise.all(
+        Object.values(sounds).map(async ({ sound }) => {
+          if (sound) {
+            const status = await sound.getStatusAsync();
+            if (status.isLoaded && status.isPlaying) {
+              await sound.stopAsync();
+            }
+          }
+        })
+      );
+
       // If sound already exists, replay it
       if (sounds[imageId]) {
         const { sound } = sounds[imageId];

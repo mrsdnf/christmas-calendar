@@ -33,6 +33,9 @@ jobs:
           sed -i 's|href="/|href="./|g' dist/index.html
           sed -i 's|src="/_expo/|src="./_expo/|g' dist/index.html
 
+          # Add PWA meta tags for mobile fullscreen experience
+          sed -i 's|<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />|<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />\n    <meta name="apple-mobile-web-app-capable" content="yes" />\n    <meta name="mobile-web-app-capable" content="yes" />\n    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />\n    <meta name="theme-color" content="#FAF5F0" />|g' dist/index.html
+
           # Fix asset paths in JavaScript bundle
           find dist/_expo/static/js -name "*.js" -exec sed -i 's|"/assets/|"./assets/|g' {} \;
           find dist/_expo/static/js -name "*.js" -exec sed -i "s|'/assets/|'./assets/|g" {} \;

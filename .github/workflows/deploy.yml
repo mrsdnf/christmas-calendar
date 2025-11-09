@@ -25,7 +25,7 @@ jobs:
         run: npm install
         
       - name: Build web app
-        run: npx expo export --platform web --public-url /christmas-calendar
+        run: npx expo export --platform web
 
       - name: Copy .nojekyll
         run: cp .nojekyll dist/

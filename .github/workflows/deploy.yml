@@ -27,6 +27,12 @@ jobs:
       - name: Build web app
         run: npx expo export --platform web
 
+      - name: Fix asset paths for subdirectory deployment
+        run: |
+          # Fix paths in index.html to be relative
+          sed -i 's|href="/|href="./|g' dist/index.html
+          sed -i 's|src="/_expo/|src="./_expo/|g' dist/index.html
+
       - name: Copy .nojekyll
         run: cp .nojekyll dist/
 

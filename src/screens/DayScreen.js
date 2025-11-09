@@ -57,10 +57,22 @@ const DayScreen = ({ route, navigation }) => {
         return;
       }
 
-      // Stop all currently playing sounds
+      // Check if this sound is already loaded and playing
+      if (sounds[imageId]) {
+        const { sound } = sounds[imageId];
+        const status = await sound.getStatusAsync();
+
+        // If it's playing, stop it and return
+        if (status.isLoaded && status.isPlaying) {
+          await sound.stopAsync();
+          return;
+        }
+      }
+
+      // Stop all other currently playing sounds
       await Promise.all(
-        Object.values(sounds).map(async ({ sound }) => {
-          if (sound) {
+        Object.entries(sounds).map(async ([id, { sound }]) => {
+          if (id !== String(imageId) && sound) {
             const status = await sound.getStatusAsync();
             if (status.isLoaded && status.isPlaying) {
               await sound.stopAsync();

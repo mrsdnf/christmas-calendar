@@ -1,0 +1,23 @@
+{
+  "name": "Christmas Calendar",
+  "short_name": "Jul",
+  "description": "En julekalender eventyr med Nora og Solnissen",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait",
+  "background_color": "#0a1f3d",
+  "theme_color": "#0a1f3d",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ]
+}

@@ -149,7 +149,6 @@ const DoorSnowflake = ({ day, isLocked, onPress, position, isToday = false }) =>
     >
       <TouchableOpacity
         onPress={onPress}
-        disabled={isLocked}
         activeOpacity={0.7}
         style={styles.touchable}
       >

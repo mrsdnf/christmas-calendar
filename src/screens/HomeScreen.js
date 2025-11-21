@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   ImageBackground,
@@ -7,42 +7,124 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+import { Audio } from 'expo-av';
 import { StatusBar } from 'expo-status-bar';
 import DoorStar from '../components/DoorStar';
 import DoorSnowflake from '../components/DoorSnowflake';
-import FallingSnow from '../components/FallingSnow';
-import { DOOR_POSITIONS, isDayUnlocked } from '../config/calendarData';
+import { DOOR_POSITIONS, isDayUnlocked, BACKGROUND_SOUNDS } from '../config/calendarData';
 
 const HomeScreen = ({ navigation }) => {
   const [devMode, setDevMode] = useState(false);
+  const [devTapCount, setDevTapCount] = useState(0);
   const [dimensions, setDimensions] = useState({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
   });
+  const currentSoundIndexRef = useRef(0);
+  const backgroundSoundRef = useRef(null);
+  const tapTimeoutRef = useRef(null);
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
       setDimensions({ width: window.width, height: window.height });
     });
 
-    return () => subscription?.remove();
+    return () => {
+      subscription?.remove();
+      // Clean up background sound on unmount
+      if (backgroundSoundRef.current) {
+        backgroundSoundRef.current.unloadAsync();
+      }
+    };
   }, []);
 
-  // Hidden dev mode toggle - tap/click to toggle
+  // Hidden dev mode toggle - requires 3 taps to enable, 1 tap to disable
   const handleDevToggle = () => {
-    setDevMode(!devMode);
-    console.log('Dev mode toggled:', !devMode);
+    // If dev mode is already on, turn it off with one tap
+    if (devMode) {
+      setDevMode(false);
+      console.log('Dev mode disabled');
+      return;
+    }
+
+    // Clear previous timeout
+    if (tapTimeoutRef.current) {
+      clearTimeout(tapTimeoutRef.current);
+    }
+
+    const newCount = devTapCount + 1;
+    setDevTapCount(newCount);
+    console.log('Dev tap count:', newCount);
+
+    if (newCount >= 3) {
+      setDevMode(true);
+      console.log('Dev mode enabled');
+      setDevTapCount(0);
+    } else {
+      // Reset tap count after 2 seconds
+      tapTimeoutRef.current = setTimeout(() => {
+        setDevTapCount(0);
+      }, 2000);
+    }
+  };
+
+  const playBackgroundSound = async () => {
+    try {
+      console.log('Playing background sound, index:', currentSoundIndexRef.current);
+
+      // Stop current sound if playing
+      if (backgroundSoundRef.current) {
+        await backgroundSoundRef.current.stopAsync();
+        await backgroundSoundRef.current.unloadAsync();
+        backgroundSoundRef.current = null;
+      }
+
+      // Get the current sound
+      const soundSource = BACKGROUND_SOUNDS[currentSoundIndexRef.current];
+      console.log('Sound source:', soundSource);
+
+      // Load and play the sound
+      const { sound } = await Audio.Sound.createAsync(soundSource);
+      backgroundSoundRef.current = sound;
+      await sound.playAsync();
+      console.log('Sound playing successfully');
+
+      // Move to next sound index (loop back to 0 if at the end)
+      currentSoundIndexRef.current = (currentSoundIndexRef.current + 1) % BACKGROUND_SOUNDS.length;
+    } catch (error) {
+      console.error('Error playing background sound:', error);
+    }
   };
 
   const handleDoorPress = (day) => {
-    if (isDayUnlocked(day, devMode)) {
+    const isUnlocked = isDayUnlocked(day, devMode);
+    console.log('Door pressed - Day:', day, 'Unlocked:', isUnlocked, 'DevMode:', devMode);
+
+    if (isUnlocked) {
       navigation.navigate('Day', { day });
+    } else {
+      // Play background sound when locked door is clicked
+      console.log('Door is locked, playing background sound');
+      playBackgroundSound();
     }
   };
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
+      <StatusBar style="light" translucent backgroundColor="transparent" />
+
+      {/* Dev Mode Toggle Button */}
+      <TouchableOpacity
+        style={styles.devToggle}
+        onPress={handleDevToggle}
+        activeOpacity={1}
+      >
+        {devMode && (
+          <View style={styles.devIndicator}>
+            <Text style={styles.devText}>DEV MODE</Text>
+          </View>
+        )}
+      </TouchableOpacity>
 
       {/* Background Image */}
       <ImageBackground
@@ -50,20 +132,15 @@ const HomeScreen = ({ navigation }) => {
         style={styles.background}
         resizeMode="cover"
       >
-        {/* Falling Snow Animation */}
-        <FallingSnow count={60} />
-
         {/* Render all doors */}
         {DOOR_POSITIONS.map((door) => {
           const isLocked = !isDayUnlocked(door.day, devMode);
           const DoorComponent = door.type === 'star' ? DoorStar : DoorSnowflake;
 
-          // Always show Day 1 as "today" for demo purposes
-          // In production, replace with: (currentMonth === 11 && currentDay === door.day)
           const today = new Date();
           const currentDay = today.getDate();
           const currentMonth = today.getMonth();
-          const isToday = door.day === 1;
+          const isToday = currentMonth === 11 && currentDay === door.day;
 
           return (
             <DoorComponent
@@ -77,18 +154,6 @@ const HomeScreen = ({ navigation }) => {
           );
         })}
 
-        {/* Hidden Dev Mode Toggle - Top Right Corner */}
-        <TouchableOpacity
-          style={styles.devToggle}
-          onPress={handleDevToggle}
-          activeOpacity={1}
-        >
-          {devMode && (
-            <View style={styles.devIndicator}>
-              <Text style={styles.devText}>DEV ON</Text>
-            </View>
-          )}
-        </TouchableOpacity>
       </ImageBackground>
     </View>
   );
@@ -106,10 +171,10 @@ const styles = StyleSheet.create({
   },
   devToggle: {
     position: 'absolute',
-    top: 40,
-    right: 10,
-    width: 80,
-    height: 50,
+    top: 0,
+    right: 0,
+    width: 30,
+    height: 30,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
@@ -125,6 +190,18 @@ const styles = StyleSheet.create({
   devText: {
     color: '#fff',
     fontSize: 12,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  tapIndicator: {
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  tapText: {
+    color: '#fff',
+    fontSize: 10,
     fontWeight: 'bold',
     textAlign: 'center',
   },

@@ -29,7 +29,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "display": "fullscreen",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "backgroundColor": "#0a1f3d",
+      "themeColor": "#0a1f3d",
+      "scope": "/",
+      "preferRelatedApplications": false
     },
     "extra": {
       "eas": {

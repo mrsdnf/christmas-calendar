@@ -1,0 +1,40 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Dark blue background -->
+  <rect width="1024" height="1024" fill="#0a1f3d"/>
+
+  <!-- Outer glow -->
+  <circle cx="512" cy="512" r="280" fill="url(#glow)" opacity="0.4"/>
+
+  <!-- Moon with gradient -->
+  <circle cx="512" cy="512" r="240" fill="url(#moonGradient)"/>
+
+  <!-- Crater details -->
+  <circle cx="450" cy="420" r="35" fill="#97a5b5" opacity="0.3"/>
+  <circle cx="580" cy="480" r="25" fill="#97a5b5" opacity="0.25"/>
+  <circle cx="520" cy="580" r="40" fill="#97a5b5" opacity="0.35"/>
+  <circle cx="600" cy="540" r="20" fill="#97a5b5" opacity="0.2"/>
+  <circle cx="430" cy="540" r="28" fill="#97a5b5" opacity="0.28"/>
+  <circle cx="560" cy="380" r="22" fill="#97a5b5" opacity="0.22"/>
+
+  <!-- Subtle highlights -->
+  <circle cx="480" cy="450" r="60" fill="white" opacity="0.12"/>
+  <circle cx="520" cy="480" r="80" fill="white" opacity="0.08"/>
+
+  <!-- Definitions -->
+  <defs>
+    <!-- Glow effect -->
+    <radialGradient id="glow">
+      <stop offset="0%" style="stop-color:#c0c8d0;stop-opacity:0.6"/>
+      <stop offset="50%" style="stop-color:#8895a5;stop-opacity:0.3"/>
+      <stop offset="100%" style="stop-color:#0a1f3d;stop-opacity:0"/>
+    </radialGradient>
+
+    <!-- Moon gradient for depth -->
+    <radialGradient id="moonGradient">
+      <stop offset="0%" style="stop-color:#d5dde5"/>
+      <stop offset="40%" style="stop-color:#b8c4d0"/>
+      <stop offset="80%" style="stop-color:#9aa8b8"/>
+      <stop offset="100%" style="stop-color:#8895a5"/>
+    </radialGradient>
+  </defs>
+</svg>

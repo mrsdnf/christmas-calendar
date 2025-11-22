@@ -1,7 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Image, Dimensions } from 'react-native';
-
-const { width, height } = Dimensions.get('window');
+import { memo } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
 
 // Define decoration sets for each day (cycling through 10 different patterns)
 const getDecorationsForDay = (day) => {
@@ -92,244 +90,58 @@ const getDecorationsForDay = (day) => {
   return decorationSets[(day - 1) % 10];
 };
 
-const WatercolorDecorations = ({ day = 1 }) => {
-  const float1 = useRef(new Animated.Value(0)).current;
-  const float2 = useRef(new Animated.Value(0)).current;
-  const float3 = useRef(new Animated.Value(0)).current;
-  const rotate1 = useRef(new Animated.Value(0)).current;
-  const rotate2 = useRef(new Animated.Value(0)).current;
-  const rotate3 = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    // Floating animation 1
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(float1, {
-          toValue: 1,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(float1, {
-          toValue: 0,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Floating animation 2
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(float2, {
-          toValue: 1,
-          duration: 3500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(float2, {
-          toValue: 0,
-          duration: 3500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Floating animation 3
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(float3, {
-          toValue: 1,
-          duration: 2800,
-          useNativeDriver: true,
-        }),
-        Animated.timing(float3, {
-          toValue: 0,
-          duration: 2800,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Gentle rotation 1
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotate1, {
-          toValue: 1,
-          duration: 4000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotate1, {
-          toValue: 0,
-          duration: 4000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Gentle rotation 2
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotate2, {
-          toValue: 1,
-          duration: 5000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotate2, {
-          toValue: 0,
-          duration: 5000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Gentle rotation 3
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotate3, {
-          toValue: 1,
-          duration: 4500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotate3, {
-          toValue: 0,
-          duration: 4500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  const float1Y = float1.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -10],
-  });
-
-  const float2Y = float2.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -8],
-  });
-
-  const float3Y = float3.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -12],
-  });
-
-  const rotate1Deg = rotate1.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '5deg'],
-  });
-
-  const rotate2Deg = rotate2.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '-3deg'],
-  });
-
-  const rotate3Deg = rotate3.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '4deg'],
-  });
-
+const WatercolorDecorations = memo(({ day = 1 }) => {
   const decorations = getDecorationsForDay(day);
 
   return (
     <View style={styles.container} pointerEvents="none">
       {/* Top Right */}
-      <Animated.View
-        style={[
-          styles.decorationTopRight,
-          {
-            transform: [
-              { translateY: float1Y },
-              { rotate: rotate1Deg },
-            ],
-          },
-        ]}
-      >
+      <View style={styles.decorationTopRight}>
         <Image
           source={decorations.topRight}
           style={styles.decorationImage}
           resizeMode="contain"
         />
-      </Animated.View>
+      </View>
 
       {/* Left Side */}
-      <Animated.View
-        style={[
-          styles.decorationLeftSide,
-          {
-            transform: [
-              { translateY: float2Y },
-              { rotate: rotate2Deg },
-            ],
-          },
-        ]}
-      >
+      <View style={styles.decorationLeftSide}>
         <Image
           source={decorations.leftSide}
           style={styles.decorationImageLarge}
           resizeMode="contain"
         />
-      </Animated.View>
+      </View>
 
       {/* Bottom Right */}
-      <Animated.View
-        style={[
-          styles.decorationBottomRight,
-          {
-            transform: [
-              { translateY: float3Y },
-              { rotate: rotate3Deg },
-            ],
-          },
-        ]}
-      >
+      <View style={styles.decorationBottomRight}>
         <Image
           source={decorations.bottomRight}
           style={styles.decorationImage}
           resizeMode="contain"
         />
-      </Animated.View>
+      </View>
 
       {/* Top Left */}
-      <Animated.View
-        style={[
-          styles.decorationTopLeft,
-          {
-            transform: [
-              { translateY: float3Y },
-              { rotate: rotate3Deg },
-              { scaleX: -1 }, // Flip for variety
-            ],
-          },
-        ]}
-      >
+      <View style={[styles.decorationTopLeft, { transform: [{ scaleX: -1 }] }]}>
         <Image
           source={decorations.topLeft}
           style={styles.decorationImageSmall}
           resizeMode="contain"
         />
-      </Animated.View>
+      </View>
 
       {/* Bottom Left */}
-      <Animated.View
-        style={[
-          styles.decorationBottomLeft,
-          {
-            transform: [
-              { translateY: float1Y },
-              { rotate: rotate1Deg },
-            ],
-          },
-        ]}
-      >
+      <View style={styles.decorationBottomLeft}>
         <Image
           source={decorations.bottomLeft}
           style={styles.decorationImageSmall}
           resizeMode="contain"
         />
-      </Animated.View>
+      </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

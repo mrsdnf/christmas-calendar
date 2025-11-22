@@ -1,67 +1,57 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Dimensions } from 'react-native';
+import { useEffect, useRef, useMemo, memo } from 'react';
+import { View, StyleSheet, Animated, Dimensions, Platform } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const Snowflake = ({ delay, startX }) => {
-  const translateY = useRef(new Animated.Value(-20)).current;
-  const drift = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
+// Detect if we're on a less powerful device
+const IS_MOBILE = Platform.OS === 'ios' || Platform.OS === 'android';
+
+const Snowflake = memo(({ delay, startX, driftAmount, duration, size, opacityValue }) => {
+  const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const duration = 8000 + Math.random() * 4000;
+    // Use simpler easing for better mobile performance
+    const config = {
+      toValue: 1,
+      duration: duration,
+      useNativeDriver: true,
+      isInteraction: false,
+    };
 
     Animated.loop(
       Animated.sequence([
         Animated.delay(delay),
-        Animated.parallel([
-          // Fade in
-          Animated.timing(opacity, {
-            toValue: 0.8,
-            duration: 1000,
-            useNativeDriver: true,
-          }),
-          // Fall down
-          Animated.timing(translateY, {
-            toValue: height + 20,
-            duration: duration,
-            useNativeDriver: true,
-          }),
-          // Drift left and right
-          Animated.sequence([
-            Animated.timing(drift, {
-              toValue: 30,
-              duration: duration / 2,
-              useNativeDriver: true,
-            }),
-            Animated.timing(drift, {
-              toValue: -30,
-              duration: duration / 2,
-              useNativeDriver: true,
-            }),
-          ]),
-        ]),
-        // Fade out and reset
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 500,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateY, {
-            toValue: -20,
-            duration: 0,
-            useNativeDriver: true,
-          }),
-          Animated.timing(drift, {
-            toValue: 0,
-            duration: 0,
-            useNativeDriver: true,
-          }),
-        ]),
+        Animated.timing(animatedValue, config),
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+          isInteraction: false,
+        }),
       ])
     ).start();
+
+    // Cleanup on unmount
+    return () => {
+      animatedValue.stopAnimation();
+    };
   }, []);
+
+  // Calculate transforms using interpolation - more efficient
+  const translateY = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-20, height + 20],
+  });
+
+  const translateX = animatedValue.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0, driftAmount, -driftAmount * 0.5],
+  });
+
+  const opacity = animatedValue.interpolate({
+    inputRange: [0, 0.1, 0.9, 1],
+    outputRange: [0, opacityValue, opacityValue, 0],
+  });
 
   return (
     <Animated.View
@@ -69,20 +59,34 @@ const Snowflake = ({ delay, startX }) => {
         styles.snowflake,
         {
           left: startX,
-          transform: [{ translateY }, { translateX: drift }],
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          transform: [{ translateY }, { translateX }],
           opacity,
         },
       ]}
+      shouldRasterizeIOS={true}
+      renderToHardwareTextureAndroid={true}
     />
   );
-};
+});
 
-const FallingSnow = ({ count = 50 }) => {
-  const snowflakes = Array.from({ length: count }, (_, i) => ({
-    id: i,
-    startX: Math.random() * width,
-    delay: Math.random() * 5000,
-  }));
+const FallingSnow = ({ count = IS_MOBILE ? 15 : 25 }) => {
+  // Memoize snowflake configuration to prevent recalculation
+  const snowflakes = useMemo(
+    () =>
+      Array.from({ length: count }, (_, i) => ({
+        id: i,
+        startX: Math.random() * width,
+        delay: Math.random() * 3000,
+        driftAmount: 15 + Math.random() * 25,
+        duration: 6000 + Math.random() * 4000,
+        size: 6 + Math.random() * 6,
+        opacityValue: 0.4 + Math.random() * 0.4,
+      })),
+    [count]
+  );
 
   return (
     <View style={styles.container} pointerEvents="none">
@@ -91,6 +95,10 @@ const FallingSnow = ({ count = 50 }) => {
           key={snowflake.id}
           delay={snowflake.delay}
           startX={snowflake.startX}
+          driftAmount={snowflake.driftAmount}
+          duration={snowflake.duration}
+          size={snowflake.size}
+          opacityValue={snowflake.opacityValue}
         />
       ))}
 

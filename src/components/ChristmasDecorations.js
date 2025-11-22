@@ -1,74 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Dimensions } from 'react-native';
+import { memo } from 'react';
+import { View, StyleSheet } from 'react-native';
 
-const ChristmasDecorations = ({ theme = 'classic' }) => {
-  const swayAnim = useRef(new Animated.Value(0)).current;
-  const floatAnim1 = useRef(new Animated.Value(0)).current;
-  const floatAnim2 = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    // Gentle swaying animation for garland
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(swayAnim, {
-          toValue: 1,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(swayAnim, {
-          toValue: 0,
-          duration: 3000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    // Floating animation for corner decorations
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim1, {
-          toValue: 1,
-          duration: 2500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim1, {
-          toValue: 0,
-          duration: 2500,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(floatAnim2, {
-          toValue: 1,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(floatAnim2, {
-          toValue: 0,
-          duration: 2000,
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  const swayRotation = swayAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['-2deg', '2deg'],
-  });
-
-  const float1Y = floatAnim1.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -8],
-  });
-
-  const float2Y = floatAnim2.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, -6],
-  });
+const ChristmasDecorations = memo(({ theme = 'classic' }) => {
 
   const getThemeColors = () => {
     const themes = {
@@ -87,39 +20,39 @@ const ChristmasDecorations = ({ theme = 'classic' }) => {
   return (
     <View style={styles.container} pointerEvents="none">
       {/* Top left - Holly sprig with berries */}
-      <Animated.View style={[styles.topLeft, { transform: [{ translateY: float1Y }] }]}>
+      <View style={styles.topLeft}>
         <View style={[styles.hollyLeaf, styles.leaf1, { backgroundColor: colors.secondary, opacity: 0.6 }]} />
         <View style={[styles.hollyLeaf, styles.leaf2, { backgroundColor: colors.secondary, opacity: 0.55 }]} />
         <View style={[styles.hollyLeaf, styles.leaf3, { backgroundColor: colors.secondary, opacity: 0.5 }]} />
         <View style={[styles.berry, styles.berryCluster1, { backgroundColor: colors.primary, opacity: 0.7 }]} />
         <View style={[styles.berry, styles.berryCluster2, { backgroundColor: colors.primary, opacity: 0.65 }]} />
         <View style={[styles.berry, styles.berryCluster3, { backgroundColor: colors.primary, opacity: 0.6 }]} />
-      </Animated.View>
+      </View>
 
       {/* Top right - Pine branch */}
-      <Animated.View style={[styles.topRight, { transform: [{ translateY: float2Y }, { rotate: swayRotation }] }]}>
+      <View style={styles.topRight}>
         <View style={[styles.pineBranch, { backgroundColor: colors.secondary, opacity: 0.5 }]} />
         <View style={[styles.pineNeedle, styles.needle1, { backgroundColor: colors.secondary, opacity: 0.45 }]} />
         <View style={[styles.pineNeedle, styles.needle2, { backgroundColor: colors.secondary, opacity: 0.4 }]} />
-      </Animated.View>
+      </View>
 
       {/* Bottom left - Berries on stem */}
-      <Animated.View style={[styles.bottomLeft, { transform: [{ translateY: float1Y }] }]}>
+      <View style={styles.bottomLeft}>
         <View style={[styles.stem, { backgroundColor: colors.accent, opacity: 0.4 }]} />
         <View style={[styles.berry, styles.berry1, { backgroundColor: colors.primary, opacity: 0.6 }]} />
         <View style={[styles.berry, styles.berry2, { backgroundColor: colors.primary, opacity: 0.55 }]} />
         <View style={[styles.berry, styles.berry3, { backgroundColor: colors.primary, opacity: 0.5 }]} />
-      </Animated.View>
+      </View>
 
       {/* Bottom right - Small holly */}
-      <Animated.View style={[styles.bottomRight, { transform: [{ translateY: float2Y }] }]}>
+      <View style={styles.bottomRight}>
         <View style={[styles.hollyLeaf, styles.leafSmall1, { backgroundColor: colors.secondary, opacity: 0.5 }]} />
         <View style={[styles.hollyLeaf, styles.leafSmall2, { backgroundColor: colors.secondary, opacity: 0.45 }]} />
         <View style={[styles.berry, styles.berryBottom, { backgroundColor: colors.primary, opacity: 0.6 }]} />
-      </Animated.View>
+      </View>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

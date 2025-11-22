@@ -187,7 +187,7 @@ const DayScreen = ({ route, navigation }) => {
         <View style={[styles.watercolorBlob, styles.blob5]} />
       </View>
 
-      <FallingSnow count={40} />
+      {!activeTextId && <FallingSnow count={40} />}
       <ChristmasDecorations theme={getThemeForDay(day)} />
       <WatercolorDecorations day={day} />
 

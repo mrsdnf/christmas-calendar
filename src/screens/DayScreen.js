@@ -21,6 +21,7 @@ const DayScreen = ({ route, navigation }) => {
   const [sounds, setSounds] = useState({});
   const [activeTextId, setActiveTextId] = useState(null);
   const [audioProgress, setAudioProgress] = useState({});
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false);
   const [dimensions, setDimensions] = useState({
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
@@ -91,6 +92,7 @@ const DayScreen = ({ route, navigation }) => {
           await sound.stopAsync();
           setActiveTextId(null);
           setAudioProgress(prev => ({ ...prev, [imageId]: null }));
+          setIsAudioPlaying(false);
           return;
         }
       }
@@ -110,8 +112,9 @@ const DayScreen = ({ route, navigation }) => {
       // Clear progress for all other sounds
       setAudioProgress({ [imageId]: { position: 0, duration: 0 } });
 
-      // Show text for this image
+      // Show text for this image and mark audio as playing
       setActiveTextId(imageId);
+      setIsAudioPlaying(true);
 
       // If sound already exists, replay it
       if (sounds[imageId]) {
@@ -129,9 +132,11 @@ const DayScreen = ({ route, navigation }) => {
               },
             }));
 
-            // Clear progress when finished
+            // Clear progress and hide text when finished
             if (status.didJustFinish) {
               setAudioProgress(prev => ({ ...prev, [imageId]: null }));
+              setActiveTextId(null);
+              setIsAudioPlaying(false);
             }
           }
         });
@@ -153,9 +158,11 @@ const DayScreen = ({ route, navigation }) => {
             },
           }));
 
-          // Clear progress when finished
+          // Clear progress and hide text when finished
           if (status.didJustFinish) {
             setAudioProgress(prev => ({ ...prev, [imageId]: null }));
+            setActiveTextId(null);
+            setIsAudioPlaying(false);
           }
         }
       });
@@ -187,7 +194,7 @@ const DayScreen = ({ route, navigation }) => {
         <View style={[styles.watercolorBlob, styles.blob5]} />
       </View>
 
-      {!activeTextId && <FallingSnow count={40} />}
+      {!isAudioPlaying && <FallingSnow count={40} />}
       <ChristmasDecorations theme={getThemeForDay(day)} />
       <WatercolorDecorations day={day} />
 
